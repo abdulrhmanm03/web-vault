@@ -1,3 +1,9 @@
+import Link from "next/link";
+
 export default function Logo() {
-  return <h1 className="text-4xl">Vault</h1>;
+  return (
+    <Link href={"/"} className="text-4xl">
+      Vault
+    </Link>
+  );
 }
