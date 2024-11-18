@@ -2,6 +2,7 @@ import { ToggleTheme } from "../shadcn/toggle-theme";
 import { UserButton } from "@clerk/nextjs";
 import { SignInButton, SignedIn, SignedOut } from "@clerk/nextjs";
 import Link from "next/link";
+import CreateForm from "../CreateForm";
 
 export default function NavRightSide() {
   return (
@@ -9,13 +10,10 @@ export default function NavRightSide() {
       <Link href={"/search"} className="pr-6">
         Search
       </Link>
-      <Link href={"/Create"} className="pr-6">
-        Create
-      </Link>
+      <CreateForm />
       <Link href={"/About"} className="pr-6">
         About
       </Link>
-
       <SignedOut>
         <SignInButton />
       </SignedOut>
