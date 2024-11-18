@@ -3,6 +3,7 @@ import { dark } from "@clerk/themes";
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
+import ReactQueryProvider from "@/lib/reactQuery";
 
 export const metadata: Metadata = {
   title: "Vault",
@@ -25,7 +26,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+            <ReactQueryProvider>{children}</ReactQueryProvider>
           </ThemeProvider>
         </body>
       </html>
