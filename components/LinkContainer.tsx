@@ -16,7 +16,7 @@ export default function LinkContainer({
   return (
     <div
       key={title}
-      className="group max-h-[220px] rounded-lg m-4 w-72 h-48 overflow-hidden relative cursor-pointer"
+      className="group max-h-[250px] rounded-lg my-4 mx-2 h-48 overflow-hidden relative cursor-pointer"
       onClick={() => window.open(url, "_blank", "noopener,noreferrer")}
     >
       <Image
@@ -27,7 +27,7 @@ export default function LinkContainer({
         alt={title}
       />
       <div className="absolute inset-0 bg-gray-800 bg-opacity-50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300">
-        <span className="text-white text-sm font-semibold">{title}</span>
+        <span className="text-white text-sm font-semibold px-2">{title}</span>
       </div>
     </div>
   );

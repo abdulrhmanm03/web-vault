@@ -1,5 +1,12 @@
 import { extractMetadata } from "@/lib/helpers";
 import LinkContainer from "./LinkContainer";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "./shadcn/carousel";
 
 const urls = [
   "https://letterboxd.com/film/seven-samurai/",
@@ -7,6 +14,7 @@ const urls = [
   "https://en.wikipedia.org/wiki/Martin_Scorsese",
   "https://www.imdb.com/title/tt0075314/",
   "https://music.youtube.com/watch?v=PHgF6CrVZ0Y&list=RDAMVMwre1C-u03m8",
+  "https://www.imdb.com/title/tt0804503/",
 ];
 
 export default async function RowOfContent() {
@@ -17,14 +25,21 @@ export default async function RowOfContent() {
     }),
   );
   return (
-    <div className="my-20">
-      <p className="mx-4 my-2">Trending this week</p>
+    <Carousel className="my-20 mx-4">
+      <p className="mx-4 mb-2">Trending this week</p>
       <hr />
-      <div className="flex justify-center items-center">
+      <CarouselContent>
         {posts.map(({ title, image, url }) => (
-          <LinkContainer key={title} title={title} image={image} url={url} />
+          <CarouselItem
+            key={title}
+            className="lg:basis-1/5 md:basis-1/4 sm:basis-1/3"
+          >
+            <LinkContainer key={title} title={title} image={image} url={url} />
+          </CarouselItem>
         ))}
-      </div>
-    </div>
+      </CarouselContent>
+      <CarouselPrevious />
+      <CarouselNext />
+    </Carousel>
   );
 }
