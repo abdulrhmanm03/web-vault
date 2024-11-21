@@ -15,6 +15,8 @@ import { Button } from "@/components/shadcn/button";
 import { Textarea } from "@/components/shadcn/textarea";
 import { Badge } from "@/components/shadcn/badge";
 import { ScrollArea } from "@/components/shadcn/scroll-area";
+import collectionSchema from "@/schemas/collection";
+import { z } from "zod";
 
 export default function CreateForm() {
   const [isActive, setIsActive] = useState(false);
@@ -41,21 +43,10 @@ export default function CreateForm() {
       window.history.back();
     }
   }
-  // TODO: Add more validation
+
   function handleSubmit() {
     setTitle(title.trim());
-
-    if (!title) {
-      alert("Title cannot be empty.");
-      return;
-    }
-
-    for (const link of links) {
-      if (!link.trim()) {
-        alert("Link cannot be empty.");
-        return;
-      }
-    }
+    setDescription(description.trim());
 
     const formData = {
       title,
@@ -64,19 +55,32 @@ export default function CreateForm() {
       links,
     };
 
-    axios
-      .post("/api/collection", formData)
-      .then((response) => {
-        console.log("Form submitted successfully:", response.data);
-        closeForm(); // Reset form state and close
-      })
-      .catch((error) => {
-        console.error("Error submitting form:", error);
-        alert("An error occurred while submitting the form. Please try again.");
-      });
+    try {
+      collectionSchema.parse(formData);
 
-    console.log("Form submitted:", formData);
-    closeForm();
+      axios
+        .post("/api/collection", formData)
+        .then((response) => {
+          console.log("Form submitted successfully:", response.data);
+          closeForm();
+        })
+        .catch((error) => {
+          console.error("Error submitting form:", error);
+          alert(
+            "An error occurred while submitting the form. Please try again.",
+          );
+        });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        alert(
+          error.errors
+            .map((err) => `${err.path.join(" ")}: ${err.message}`)
+            .join("\n"),
+        );
+      } else {
+        console.error("Unexpected error:", error);
+      }
+    }
   }
 
   function addTag() {
