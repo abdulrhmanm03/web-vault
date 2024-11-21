@@ -1,6 +1,38 @@
-// TODO: complete this to create a new collection and add it to the database
+import { db } from "@/db/db_conn";
+import { collections } from "@/db/schema";
+import { auth } from "@clerk/nextjs/server";
+import { z } from "zod";
+import collectionSchema from "@/schemas/collection";
+
 export async function POST(req: Request) {
-  const body = await req.json();
-  console.log(body);
-  return new Response("Hello, Next.js!", { status: 200 });
+  const { userId } = await auth();
+
+  try {
+    const body = await req.json();
+    const collection = collectionSchema.parse(body);
+
+    if (!userId) {
+      return new Response("Unauthorized", { status: 401 });
+    }
+
+    await db.insert(collections).values({
+      title: collection.title,
+      user_id: userId,
+    });
+
+    console.log("created", collection, "for", userId);
+
+    return new Response("Collection created successfully", { status: 201 });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      console.error(error);
+      return new Response(JSON.stringify({ errors: error.errors }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    console.error(error);
+    return new Response("Internal Server Error", { status: 500 });
+  }
 }
