@@ -1,6 +1,8 @@
 import { Webhook } from "svix";
 import { headers } from "next/headers";
 import { WebhookEvent } from "@clerk/nextjs/server";
+import { db } from "@/db/db_conn";
+import { users } from "@/db/schema";
 
 export async function POST(req: Request) {
   const SIGNING_SECRET = process.env.SIGNING_SECRET;
@@ -47,12 +49,20 @@ export async function POST(req: Request) {
     });
   }
 
-  // Do something with payload
-  // For this guide, log payload to console
   const { id } = evt.data;
-  const eventType = evt.type;
-  console.log(`Received webhook with ID ${id} and event type of ${eventType}`);
-  console.log("Webhook payload:", body);
+  // const eventType = evt.type;
+
+  if (id) {
+    try {
+      await db.insert(users).values({ id });
+      console.log("User inserted into database:", id);
+    } catch (error) {
+      console.error("Error: Could not create user:", error);
+      return new Response("Error: Failed to create user", {
+        status: 500,
+      });
+    }
+  }
 
   return new Response("Webhook received", { status: 200 });
 }
