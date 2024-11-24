@@ -1,8 +1,7 @@
-import { db } from "@/db/db_conn";
-import { collections } from "@/db/schema";
 import { auth } from "@clerk/nextjs/server";
 import { z } from "zod";
 import collectionSchema from "@/schemas/collection";
+import { create_collection } from "@/db/quereis";
 
 export async function POST(req: Request) {
   const { userId } = await auth();
@@ -14,11 +13,7 @@ export async function POST(req: Request) {
     if (!userId) {
       return new Response("Unauthorized", { status: 401 });
     }
-
-    await db.insert(collections).values({
-      title: collection.title,
-      user_id: userId,
-    });
+    await create_collection(collection, userId);
 
     console.log("created", collection, "for", userId);
 
