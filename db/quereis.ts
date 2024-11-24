@@ -1,13 +1,10 @@
-import collectionSchema from "@/schemas/collection";
-import { z } from "zod";
 import { db } from "@/db/db_conn";
 import { collections, links, tags } from "@/db/schema";
 import { eq } from "drizzle-orm";
-
-type collection = z.infer<typeof collectionSchema>;
+import { Collection } from "@/schemas/collection";
 
 export async function create_collection(
-  collection: collection,
+  collection: Collection,
   user_id: string,
 ) {
   await db.transaction(async (trx) => {
@@ -44,8 +41,14 @@ export async function create_collection(
 export async function get_collection(collection_id: number) {
   const [collection_date, links_data, tags_data] = await Promise.all([
     db.select().from(collections).where(eq(collections.id, collection_id)),
-    db.select().from(links).where(eq(links.collection_id, collection_id)),
-    db.select().from(tags).where(eq(tags.collection_id, collection_id)),
+    db
+      .select({ link: links.link })
+      .from(links)
+      .where(eq(links.collection_id, collection_id)),
+    db
+      .select({ tag: tags.tag })
+      .from(tags)
+      .where(eq(tags.collection_id, collection_id)),
   ]);
 
   if (collection_date.length == 0) {

@@ -9,4 +9,6 @@ const collectionSchema = z.object({
     .min(1, "At least one link is required"),
 });
 
+export type Collection = z.infer<typeof collectionSchema>;
+
 export default collectionSchema;
