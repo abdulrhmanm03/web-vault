@@ -2,6 +2,7 @@ import collectionSchema from "@/schemas/collection";
 import { z } from "zod";
 import { db } from "@/db/db_conn";
 import { collections, links, tags } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 type collection = z.infer<typeof collectionSchema>;
 
@@ -38,4 +39,26 @@ export async function create_collection(
         ),
     ]);
   });
+}
+
+export async function get_collection(collection_id: number) {
+  const [collection_date, links_data, tags_data] = await Promise.all([
+    db.select().from(collections).where(eq(collections.id, collection_id)),
+    db.select().from(links).where(eq(links.collection_id, collection_id)),
+    db.select().from(tags).where(eq(tags.collection_id, collection_id)),
+  ]);
+
+  if (collection_date.length == 0) {
+    return null;
+  }
+
+  const links_ =
+    links_data.length == 0 ? [] : links_data.map((link) => link.link);
+  const tags_ = tags_data.length == 0 ? [] : tags_data.map((tag) => tag.tag);
+
+  return {
+    ...collection_date[0],
+    links: links_,
+    tags: tags_,
+  };
 }

@@ -15,7 +15,7 @@ export const collections = sqliteTable(
   {
     id: integer("id").primaryKey({ autoIncrement: true }),
     title: text("title").notNull(),
-    description: text("description"),
+    description: text("description").notNull(),
     user_id: text("user_id")
       .references(() => users.id, { onDelete: "cascade" })
       .notNull(),
